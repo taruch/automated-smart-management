@@ -1,0 +1,191 @@
+---
+- name: smart management setup - quickstart
+  hosts: localhost
+  gather_facts: no
+  
+  vars:
+    - CONTROLLER_USERNAME: "{{ user }}"
+    - CONTROLLER_PASSWORD: "{{ pass }}"
+    - CONTROLLER_HOST: "{{ controller }}"
+
+  tasks:
+    - name: Launch Job - Setup / Controller Job
+      ansible.controller.job_launch:
+        tower_host: "{{ controller }}"
+        tower_username: "{{ user }}"
+        tower_password: "{{ pass }}"
+        name: "SETUP / Controller"
+      register: job_setup_controller_job
+      tags: [ never, controller_setup ]
+
+    - name: Wait for job job_setup_controller_job max 180s
+      ansible.controller.job_wait:
+        job_id: "{{ job_setup_controller_job.id }}"
+        tower_host: "{{ controller }}"
+        tower_username: "{{ user }}"
+        tower_password: "{{ pass }}"
+        timeout: 180
+      tags: [ never, controler_setup ]
+
+    - name: Launch Job - SATELLITE / RHEL - Publish Content View
+      ansible.controller.job_launch:
+        tower_host: "{{ controller }}"
+        tower_username: "{{ user }}"
+        tower_password: "{{ pass }}"
+        name: "SATELLITE / RHEL - Publish Content View"
+        extra_vars:
+          content_view: RHEL7
+      register: job_publish_content_view 
+      tags: [ never, publish_content ]
+
+    - name: Wait for job job_publish_content_view max 120s
+      ansible.controller.job_wait:
+        job_id: "{{ job_publish_content_view.id }}"
+        tower_host: "{{ controller }}"
+        tower_username: "{{ user }}"
+        tower_password: "{{ pass }}"
+        timeout: 120
+      tags: [ never, publish_content ]
+
+    - name: Launch Job - CONVERT2RHEL / 01 - Take node snapshot
+      ansible.controller.job_launch:
+        tower_host: "{{ controller }}"
+        tower_username: "{{ user }}"
+        tower_password: "{{ pass }}"
+        name: "CONVERT2RHEL / 01 - Take node snapshot"
+      #when: SNAPSHOT is yes 
+      when: snapshot | default('false') | bool
+      register: job_take_node_snapshot
+      tags: [ never, take_snapshot ]
+
+    - name: Wait for job job_take_node_snapshot max 600s
+      ansible.controller.job_wait:
+        job_id: "{{ job_take_node_snapshot.id }}"
+        tower_host: "{{ controller }}"
+        tower_username: "{{ user }}"
+        tower_password: "{{ pass }}"
+        timeout: 600
+      when: snapshot | default('false') | bool
+      tags: [ never, take_snapshot ]
+
+    - name: Launch Job - SERVER / RHEL7 - Register
+      ansible.controller.job_launch:
+        tower_host: "{{ controller }}"
+        tower_username: "{{ user }}"
+        tower_password: "{{ pass }}"
+        name: "SERVER / RHEL7 - Register"
+        extra_vars:
+          PREFIX: node
+          env: Dev
+      when: snapshot | default('false') | bool
+      register: job_rhel7_register
+      tags: [ never, rhel7_register ]
+
+    - name: Wait for job SERVER / RHEL7 - Register
+      ansible.controller.job_wait:
+        job_id: "{{ job_rhel7_register.id }}"
+        tower_host: "{{ controller }}"
+        tower_username: "{{ user }}"
+        tower_password: "{{ pass }}"
+        timeout: 600
+      tags: [ never, rhel7_register ]
+
+    - name: Launch Job - SERVER / CentOS7 - Register
+      ansible.controller.job_launch:
+        tower_host: "{{ controller }}"
+        tower_username: "{{ user }}"
+        tower_password: "{{ pass }}"
+        name: "SERVER / CentOS7 - Register"
+        extra_vars:
+          PREFIX: node
+          env: Dev
+      register: job_centos7_register
+      tags: [ never, centos7_register ]
+
+    - name: Wait for job SERVER / CentOS7 - Register
+      ansible.controller.job_wait:
+        job_id: "{{ job_centos7_register.id }}"
+        tower_host: "{{ controller }}"
+        tower_username: "{{ user }}"
+        tower_password: "{{ pass }}"
+        timeout: 600
+      tags: [ never, centos7_register ]
+
+    - name: Launch Job - EC2 / Set instance tags based on Satellite(Foreman) facts
+      ansible.controller.job_launch:
+        tower_host: "{{ controller }}"
+        tower_username: "{{ user }}"
+        tower_password: "{{ pass }}"
+        name: "EC2 / Set instance tags based on Satellite(Foreman) facts"
+      register: job
+      tags: [ never, ec2_set_instance_tags ]
+ 
+    - name: Wait for job EC2 / Set instance tags based on Satellite(Foreman) facts
+      ansible.controller.job_wait:
+        job_id: "{{ job.id }}"
+        tower_host: "{{ controller }}"
+        tower_username: "{{ user }}"
+        tower_password: "{{ pass }}"
+        timeout: 600
+      tags: [ never, ec2_set_instance_tags ]
+
+    - name: Launch Job - EC2 / Set instance tag - AnsibleGroup
+      ansible.controller.job_launch:
+        tower_host: "{{ controller }}"
+        tower_username: "{{ user }}"
+        tower_password: "{{ pass }}"
+        name: "EC2 / Set instance tag - AnsibleGroup"
+      register: job
+      tags: [ never, ec2_set_instance_tags_ansiblegroup ]
+ 
+    - name: Wait for job EC2 / Set instance tag - AnsibleGroup
+      ansible.controller.job_wait:
+        job_id: "{{ job.id }}"
+        tower_host: "{{ controller }}"
+        tower_username: "{{ user }}"
+        tower_password: "{{ pass }}"
+        timeout: 600
+      tags: [ never, ec2_set_instance_tags_ansiblegroup ]
+
+    - name: Launch Job - CONTROLLER / Update inventories via dynamic sources
+      ansible.controller.job_launch:
+        tower_host: "{{ controller }}"
+        tower_username: "{{ user }}"
+        tower_password: "{{ pass }}"
+        name: "CONTROLLER / Update inventories via dynamic sources"
+        extra_vars:
+          content_view: RHEL7
+          env: Dev
+      register: job
+      tags: [ never, update_inventories_rhel ]
+
+    - name: Wait for job CONTROLLER / Update inventories via dynamic sources
+      ansible.controller.job_wait:
+        job_id: "{{ job.id }}"
+        tower_host: "{{ controller }}"
+        tower_username: "{{ user }}"
+        tower_password: "{{ pass }}"
+        timeout: 600
+      tags: [ never, update_inventories_rhel ]
+
+    - name: Launch Job - CONTROLLER / Update inventories via dynamic sources
+      ansible.controller.job_launch:
+        tower_host: "{{ controller }}"
+        tower_username: "{{ user }}"
+        tower_password: "{{ pass }}"
+        name: "CONTROLLER / Update inventories via dynamic sources"
+        extra_vars:
+          content_view: CentOS7
+          env: Dev
+      register: job
+      tags: [ never, update_inventories_centos ]
+
+    - name: Wait for job CONTROLLER / Update inventories via dynamic sources
+      ansible.controller.job_wait:
+        job_id: "{{ job.id }}"
+        tower_host: "{{ controller }}"
+        tower_username: "{{ user }}"
+        tower_password: "{{ pass }}"
+        timeout: 600
+      tags: [ never, update_inventories_centos ]
+
