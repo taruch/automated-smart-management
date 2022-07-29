@@ -44,7 +44,6 @@
       awx.awx.job_launch:
         name: "CONVERT2RHEL / 01 - Take node snapshot"
       #when: SNAPSHOT is yes 
-      when: snapshot | default('false') | bool
       register: job_take_node_snapshot
       tags: [ never, take_snapshot ]
 
@@ -52,7 +51,6 @@
       awx.awx.job_wait:
         job_id: "{{ job_take_node_snapshot.id }}"
         timeout: 600
-      when: snapshot | default('false') | bool
       tags: [ never, take_snapshot ]
 
     - name: Launch Job - SERVER / RHEL7 - Register
