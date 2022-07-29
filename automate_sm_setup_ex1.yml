@@ -7,11 +7,10 @@
     - awx.awx
   
   environment:
-       CONTROLLER_HOST: "{{ controller }}"
-       CONTROLLER_USERNAME: "{{ username }}"
-       CONTROLLER_PASSWORD: "{{ password }}"
-       CONTROLLER_VERIFY_SSL: False
-       controller: Red Hat Ansible Automation Platform
+    #CONTROLLER_HOST: "{{ controller }}"
+    #CONTROLLER_USERNAME: "{{ username }}"
+    #CONTROLLER_PASSWORD: "{{ password }}"
+    CONTROLLER_VERIFY_SSL: False
 
   tasks:
     - name: Launch Job - Setup / Controller Job
