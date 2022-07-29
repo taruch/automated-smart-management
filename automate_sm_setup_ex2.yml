@@ -16,9 +16,6 @@
     - name: Create OpenSCAP Configure Job
       awx.awx.job_template:
         name: "OpenSCAP Configure"
-        controller_host: "{{ controller }}"
-        controller_username: "{{ user }}"
-        controller_password: "{{ pass }}"
         job_type: "run"
         organization: "Default"
         inventory: "RHEL7 Development"
@@ -50,9 +47,6 @@
 
     - name: Launch Job - OpenSCAP_Configure
       awx.awx.job_launch:
-        controller_host: "{{ controller }}"
-        controller_username: "{{ user }}"
-        controller_password: "{{ pass }}"
         name: "OpenSCAP Configure"
       register: job
       tags: [ never, openscap_configure ]
@@ -60,9 +54,6 @@
     - name: Wait for job OpenSCAP_Configure
       awx.awx.job_wait:
         job_id: "{{ job.id }}"
-        controller_host: "{{ controller }}"
-        controller_username: "{{ user }}"
-        controller_password: "{{ pass }}"
         timeout: 800
       tags: [ never, openscap_configure ]
 
