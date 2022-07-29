@@ -2,21 +2,23 @@
 - name: smart management setup - quickstart ex2
   hosts: localhost
   gather_facts: no
+  collections:
+    - awx.awx
   
   environment:
-       CONTROLLER_HOST: "{{ controller }}"
-       CONTROLLER_USERNAME: "{{ user }}"
-       CONTROLLER_PASSWORD: "{{ pass }}"
-       CONTROLLER_VERIFY_SSL: False
+    #CONTROLLER_HOST: "{{ controller }}"
+    #CONTROLLER_USERNAME: "{{ user }}"
+    #CONTROLLER_PASSWORD: "{{ pass }}"
+    #CONTROLLER_VERIFY_SSL: False
 
   tasks:
 
     - name: Create OpenSCAP Configure Job
-      ansible.controller.job_template:
+      awx.awx.job_template:
         name: "OpenSCAP Configure"
-        tower_host: "{{ controller }}"
-        tower_username: "{{ user }}"
-        tower_password: "{{ pass }}"
+        controller_host: "{{ controller }}"
+        controller_username: "{{ user }}"
+        controller_password: "{{ pass }}"
         job_type: "run"
         organization: "Default"
         inventory: "RHEL7 Development"
@@ -47,20 +49,20 @@
 
 
     - name: Launch Job - OpenSCAP_Configure
-      ansible.controller.job_launch:
-        tower_host: "{{ controller }}"
-        tower_username: "{{ user }}"
-        tower_password: "{{ pass }}"
+      awx.awx.job_launch:
+        controller_host: "{{ controller }}"
+        controller_username: "{{ user }}"
+        controller_password: "{{ pass }}"
         name: "OpenSCAP Configure"
       register: job
       tags: [ never, openscap_configure ]
 
     - name: Wait for job OpenSCAP_Configure
-      ansible.controller.job_wait:
+      awx.awx.job_wait:
         job_id: "{{ job.id }}"
-        tower_host: "{{ controller }}"
-        tower_username: "{{ user }}"
-        tower_password: "{{ pass }}"
+        controller_host: "{{ controller }}"
+        controller_username: "{{ user }}"
+        controller_password: "{{ pass }}"
         timeout: 800
       tags: [ never, openscap_configure ]
 
