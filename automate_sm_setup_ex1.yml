@@ -42,7 +42,6 @@
     - name: Launch Job - CONVERT2RHEL / 01 - Take node snapshot
       awx.awx.job_launch:
         name: "CONVERT2RHEL / 01 - Take node snapshot"
-      #when: SNAPSHOT is yes 
       register: job_take_node_snapshot
       tags: [ never, take_snapshot ]
 
@@ -58,7 +57,6 @@
         extra_vars:
           PREFIX: node
           env: Dev
-      when: snapshot | default('false') | bool
       register: job_rhel7_register
       tags: [ never, rhel7_register ]
 
