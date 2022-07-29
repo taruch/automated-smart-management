@@ -11,7 +11,7 @@
        CONTROLLER_USERNAME: "{{ username }}"
        CONTROLLER_PASSWORD: "{{ password }}"
        CONTROLLER_VERIFY_SSL: False
-
+       controller: Red Hat Ansible Automation Platform
 
   tasks:
     - name: Launch Job - Setup / Controller Job
