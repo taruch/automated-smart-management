@@ -1,21 +1,21 @@
 ---
 - name: smart management setup - quickstart
   hosts: localhost
+  connection: local
   gather_facts: no
+  collections:
+    - awx.awx
   
   environment:
        CONTROLLER_HOST: "{{ controller }}"
-       CONTROLLER_USERNAME: "{{ user }}"
-       CONTROLLER_PASSWORD: "{{ pass }}"
+       CONTROLLER_USERNAME: "{{ username }}"
+       CONTROLLER_PASSWORD: "{{ password }}"
        CONTROLLER_VERIFY_SSL: False
 
 
   tasks:
     - name: Launch Job - Setup / Controller Job
       awx.awx.job_launch:
-        controller_host: "{{ controller }}"
-        controller_username: "{{ user }}"
-        controller_password: "{{ pass }}"
         name: "SETUP / Controller"
       register: job_setup_controller_job
       tags: [ never, controller_setup ]
@@ -23,17 +23,11 @@
     - name: Wait for job job_setup_controller_job max 180s
       awx.awx.job_wait:
         job_id: "{{ job_setup_controller_job.id }}"
-        controller_host: "{{ controller }}"
-        controller_username: "{{ user }}"
-        controller_password: "{{ pass }}"
         timeout: 180
-      tags: [ never, controler_setup ]
+      tags: [ never, controller_setup ]
 
     - name: Launch Job - SATELLITE / RHEL - Publish Content View
       awx.awx.job_launch:
-        controller_host: "{{ controller }}"
-        controller_username: "{{ user }}"
-        controller_password: "{{ pass }}"
         name: "SATELLITE / RHEL - Publish Content View"
         extra_vars:
           content_view: RHEL7
@@ -43,17 +37,11 @@
     - name: Wait for job job_publish_content_view max 120s
       awx.awx.job_wait:
         job_id: "{{ job_publish_content_view.id }}"
-        controller_host: "{{ controller }}"
-        controller_username: "{{ user }}"
-        controller_password: "{{ pass }}"
         timeout: 120
       tags: [ never, publish_content ]
 
     - name: Launch Job - CONVERT2RHEL / 01 - Take node snapshot
       awx.awx.job_launch:
-        controller_host: "{{ controller }}"
-        controller_username: "{{ user }}"
-        controller_password: "{{ pass }}"
         name: "CONVERT2RHEL / 01 - Take node snapshot"
       #when: SNAPSHOT is yes 
       when: snapshot | default('false') | bool
@@ -63,18 +51,12 @@
     - name: Wait for job job_take_node_snapshot max 600s
       awx.awx.job_wait:
         job_id: "{{ job_take_node_snapshot.id }}"
-        controller_host: "{{ controller }}"
-        controller_username: "{{ user }}"
-        controller_password: "{{ pass }}"
         timeout: 600
       when: snapshot | default('false') | bool
       tags: [ never, take_snapshot ]
 
     - name: Launch Job - SERVER / RHEL7 - Register
       awx.awx.job_launch:
-        controller_host: "{{ controller }}"
-        controller_username: "{{ user }}"
-        controller_password: "{{ pass }}"
         name: "SERVER / RHEL7 - Register"
         extra_vars:
           PREFIX: node
@@ -86,17 +68,11 @@
     - name: Wait for job SERVER / RHEL7 - Register
       awx.awx.job_wait:
         job_id: "{{ job_rhel7_register.id }}"
-        controller_host: "{{ controller }}"
-        controller_username: "{{ user }}"
-        controller_password: "{{ pass }}"
         timeout: 600
       tags: [ never, rhel7_register ]
 
     - name: Launch Job - SERVER / CentOS7 - Register
       awx.awx.job_launch:
-        controller_host: "{{ controller }}"
-        controller_username: "{{ user }}"
-        controller_password: "{{ pass }}"
         name: "SERVER / CentOS7 - Register"
         extra_vars:
           PREFIX: node
@@ -107,17 +83,11 @@
     - name: Wait for job SERVER / CentOS7 - Register
       awx.awx.job_wait:
         job_id: "{{ job_centos7_register.id }}"
-        controller_host: "{{ controller }}"
-        controller_username: "{{ user }}"
-        controller_password: "{{ pass }}"
         timeout: 600
       tags: [ never, centos7_register ]
 
     - name: Launch Job - EC2 / Set instance tags based on Satellite(Foreman) facts
       awx.awx.job_launch:
-        controller_host: "{{ controller }}"
-        controller_username: "{{ user }}"
-        controller_password: "{{ pass }}"
         name: "EC2 / Set instance tags based on Satellite(Foreman) facts"
       register: job
       tags: [ never, ec2_set_instance_tags ]
@@ -125,17 +95,11 @@
     - name: Wait for job EC2 / Set instance tags based on Satellite(Foreman) facts
       awx.awx.job_wait:
         job_id: "{{ job.id }}"
-        controller_host: "{{ controller }}"
-        controller_username: "{{ user }}"
-        controller_password: "{{ pass }}"
         timeout: 600
       tags: [ never, ec2_set_instance_tags ]
 
     - name: Launch Job - EC2 / Set instance tag - AnsibleGroup
       awx.awx.job_launch:
-        controller_host: "{{ controller }}"
-        controller_username: "{{ user }}"
-        controller_password: "{{ pass }}"
         name: "EC2 / Set instance tag - AnsibleGroup"
       register: job
       tags: [ never, ec2_set_instance_tags_ansiblegroup ]
@@ -143,17 +107,11 @@
     - name: Wait for job EC2 / Set instance tag - AnsibleGroup
       awx.awx.job_wait:
         job_id: "{{ job.id }}"
-        controller_host: "{{ controller }}"
-        controller_username: "{{ user }}"
-        controller_password: "{{ pass }}"
         timeout: 600
       tags: [ never, ec2_set_instance_tags_ansiblegroup ]
 
     - name: Launch Job - CONTROLLER / Update inventories via dynamic sources
       awx.awx.job_launch:
-        controller_host: "{{ controller }}"
-        controller_username: "{{ user }}"
-        controller_password: "{{ pass }}"
         name: "CONTROLLER / Update inventories via dynamic sources"
         extra_vars:
           content_view: RHEL7
@@ -164,17 +122,11 @@
     - name: Wait for job CONTROLLER / Update inventories via dynamic sources
       awx.awx.job_wait:
         job_id: "{{ job.id }}"
-        controller_host: "{{ controller }}"
-        controller_username: "{{ user }}"
-        controller_password: "{{ pass }}"
         timeout: 600
       tags: [ never, update_inventories_rhel ]
 
     - name: Launch Job - CONTROLLER / Update inventories via dynamic sources
       awx.awx.job_launch:
-        controller_host: "{{ controller }}"
-        controller_username: "{{ user }}"
-        controller_password: "{{ pass }}"
         name: "CONTROLLER / Update inventories via dynamic sources"
         extra_vars:
           content_view: CentOS7
@@ -185,9 +137,6 @@
     - name: Wait for job CONTROLLER / Update inventories via dynamic sources
       awx.awx.job_wait:
         job_id: "{{ job.id }}"
-        controller_host: "{{ controller }}"
-        controller_username: "{{ user }}"
-        controller_password: "{{ pass }}"
         timeout: 600
       tags: [ never, update_inventories_centos ]
 
