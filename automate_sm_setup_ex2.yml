@@ -31,17 +31,14 @@
             - STIG_Compliance
         state: "present"
       register: job
-      tags: [ never, openscap_configure]
 
     - name: debug
       debug:
         var: job
-      tags: [ never, openscap_configure ]
 
     - name: Wait for job OpenSCAP_Configure Template
       ansible.builtin.pause:
         minutes: 1
-      tags: [ never, openscap_configure ]
       when: job.changed
 
 
@@ -49,11 +46,8 @@
       awx.awx.job_launch:
         name: "OpenSCAP Configure"
       register: job
-      tags: [ never, openscap_configure ]
 
     - name: Wait for job OpenSCAP_Configure
       awx.awx.job_wait:
         job_id: "{{ job.id }}"
         timeout: 800
-      tags: [ never, openscap_configure ]
-
