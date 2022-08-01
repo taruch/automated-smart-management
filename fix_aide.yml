@@ -1,6 +1,7 @@
 ---
 - name: Fix Aide Compliance
   hosts: all
+  become: yes
   tasks:
     - name: Ensure aide is installed
       package:
