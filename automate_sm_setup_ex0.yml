@@ -1,5 +1,5 @@
 ---
-- name: smart management setup - quickstart
+- name: smart management setup - quickstart (ex-0)
   hosts: localhost
   connection: local
   gather_facts: no

@@ -1,5 +1,5 @@
 ---
-- name: smart management setup - quickstart ex2
+- name: smart management setup - quickstart ex1
   hosts: localhost
   gather_facts: no
   collections:
