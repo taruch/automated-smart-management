@@ -83,7 +83,7 @@
 
     - name: Launch Job - EC2 / Set instance #tags based on Satellite(Foreman) facts
       awx.awx.job_launch:
-        name: "EC2 / Set instance #tags based on Satellite(Foreman) facts"
+        name: "EC2 / Set instance tags based on Satellite(Foreman) facts"
       register: job
       #tags: [ never, ec2_set_instance_tags ]
  
