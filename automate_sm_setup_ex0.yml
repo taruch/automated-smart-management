@@ -73,13 +73,13 @@
           PREFIX: node
           env: Dev
       register: job_centos7_register
-      #tags: [ never, centos7_register ]
+      tags: [ never, centos7_register ]
 
     - name: Wait for job SERVER / CentOS7 - Register
       awx.awx.job_wait:
         job_id: "{{ job_centos7_register.id }}"
         timeout: 600
-      #tags: [ never, centos7_register ]
+      tags: [ never, centos7_register ]
 
     - name: Launch Job - EC2 / Set instance #tags based on Satellite(Foreman) facts
       awx.awx.job_launch:
