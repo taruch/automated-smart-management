@@ -3,7 +3,7 @@
   hosts: localhost
   gather_facts: no
   collections:
-    - awx.awx
+    - ansible.controller
   
   environment:
     #CONTROLLER_HOST: "{{ controller }}"
@@ -14,7 +14,7 @@
   tasks:
 
     - name: Create OpenSCAP Configure Job
-      awx.awx.job_template:
+      ansible.controller.job_template:
         name: "OpenSCAP Configure"
         job_type: "run"
         organization: "Default"
@@ -43,11 +43,11 @@
 
 
     - name: Launch Job - OpenSCAP_Configure
-      awx.awx.job_launch:
+      ansible.controller.job_launch:
         name: "OpenSCAP Configure"
       register: job
 
     - name: Wait for job OpenSCAP_Configure
-      awx.awx.job_wait:
+      ansible.controller.job_wait:
         job_id: "{{ job.id }}"
         timeout: 800
