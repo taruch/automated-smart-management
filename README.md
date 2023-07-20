@@ -4,7 +4,7 @@ To add the ServiceNow Templates to your Ansible Automation Platform Controller, 
 Project Name: Ansible and Satellite Exercise Automation\
 Project Organization: Default\
 Project Source Control Type: Git\
-Project Source Control URL: https://github.com/taruch/automated-smart-management.git
+Project Source Control URL: https://github.com/taruch/automated-smart-management.git\
 Project Source Control Branch: aap2-29compat-ruch
 
 Then, you can either create a Setup Template using the 'Ansible and Satellite Exercise Automation' project and the satellite_exercise_template_create.yml template, or run the following using Ansible Navigator:\
