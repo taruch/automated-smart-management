@@ -13,109 +13,41 @@
 
   tasks:
 
-    - name: Create SATELLITE / Patching Workflow 
-      ansible.controller.workflow_job_template:
-        name: "SATELLITE / Patching Workflow"
-        inventory: Demo Inventory
-        #extra_vars: {'foo': 'bar', 'another-foo': {'barz': 'bar2'}}
-        workflow_nodes:
-        - identifier: Inventory Source Sync 
-          unified_job_template:
-            name: EC2 Dynamic Source - RHEL7 Development
-            inventory:
-              organization:
-                name: Default
-            type: inventory_source
-          related:
-            success_nodes: 
-              - identifier: SERVER / RHEL7 - Fact Scan 
-            failure_nodes: []
-            always_nodes: []
-            credentials: []
-
-        - identifier: SERVER / RHEL7 - Fact Scan
-          unified_job_template:
-            organization:
-              name: Default
-            name: SERVER / RHEL7 - Fact Scan
-            type: job_template
-          related:
-            success_nodes: 
-              - identifier: SERVER / RHEL7 - Patch
-            failure_nodes: []
-            always_nodes: []
-            credentials: []
-
-
-        - identifier: SATELLITE / RHEL - Publish Content View
-          unified_job_template:
-            organization:
-              name: Default
-            name: SATELLITE / RHEL - Publish Content View
-            type: job_template
-            vars: {'content_view': 'RHEL7'}
-          credentials: []
-          related:
-            success_nodes:
-              - identifier: SATELLITE / RHEL - Promote Content View Job Template
-            failure_nodes: []
-            always_nodes: []
-            credentials: []
-
-        - identifier: SATELLITE / RHEL - Promote Content View Job Template
-          unified_job_template:
-            organization:
-              name: Default
-            name: SATELLITE / RHEL - Promote Content View
-            type: job_template
-            vars: 
-              content_view: RHEL7
-              current_lifecycle_environment: RHEL7_Dev
-              lifecycle_environment: RHEL7_QA
-          credentials: []
-          related:
-            success_nodes:
-              - identifier: SERVER / RHEL7 - Patch
-            failure_nodes: []
-            always_nodes: []
-            credentials: []
-
-
-        - identifier: SERVER / RHEL7 - Patch
-          unified_job_template:
-            organization:
-              name: Default
-            name: SERVER / RHEL7 - Patch
-            type: job_template
-            vars:
-              lifecycle_stage: RHEL7_Dev
-              check_only: 'no'
-          credentials: []
-          related:
-            success_nodes:
-              - identifier: 
-            failure_nodes: []
-            always_nodes: []
-            credentials: []
-
+    - name: Create OpenSCAP Configure Job
+      ansible.controller.job_template:
+        name: "OpenSCAP Configure"
+        job_type: "run"
+        organization: "Default"
+        inventory: "RHEL7 Development"
+        project: "Automated Management"
+        execution_environment: "auto_satellite controller iac execution environment"
+        playbook: "configure_openscap.yml"
+        credentials:
+          - "Workshop Credential"
+          - "Satellite Credential"
+        extra_vars:
+          HOSTS: all
+          Policy_scan:
+            - STIG_Compliance
+        state: "present"
       register: job
 
     - name: debug
-      ansible.builtin.debug:
+      debug:
         var: job
-        verbosity: 2
 
-    - name: Wait for job SATELLITE / Patching Workflow Template
+    - name: Wait for job OpenSCAP_Configure Template
       ansible.builtin.pause:
         minutes: 1
       when: job.changed
 
-    - name: Launch Job - SATELLITE / Patching Workflow
+
+    - name: Launch Job - OpenSCAP_Configure
       ansible.controller.job_launch:
-        name: "SATELLITE / Patching Workflow"
+        name: "OpenSCAP Configure"
       register: job
 
-    - name: Wait for job SATELLITE / Patching Workflow
+    - name: Wait for job OpenSCAP_Configure
       ansible.controller.job_wait:
         job_id: "{{ job.id }}"
         timeout: 800
