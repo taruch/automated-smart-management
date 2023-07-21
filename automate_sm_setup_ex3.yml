@@ -2,6 +2,8 @@
 - name: smart management setup - Automating Patch Management
   hosts: localhost
   gather_facts: no
+  collections:
+  - ansible.controller
   environment:
        CONTROLLER_HOST: "{{ controller }}"
        CONTROLLER_USERNAME: "{{ user }}"
