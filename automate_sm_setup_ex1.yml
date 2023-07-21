@@ -20,7 +20,7 @@
         organization: "Default"
         inventory: "RHEL7 Development"
         project: "Automated Management"
-        execution_environment: "smart_mgmt workshop execution environment"
+        execution_environment: "auto_satellite controller iac execution environment"
         playbook: "configure_openscap.yml"
         credentials:
           - "Workshop Credential"
