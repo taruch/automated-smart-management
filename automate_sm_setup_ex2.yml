@@ -23,8 +23,6 @@
           unified_job_template:
             name: EC2 Dynamic Source - RHEL7 Development
             inventory:
-              organization:
-                name: Default
             type: inventory_source
           related:
             success_nodes: 
@@ -47,8 +45,6 @@
 
         - identifier: SATELLITE / RHEL - Publish Content View
           unified_job_template:
-            organization:
-              name: Default
             name: SATELLITE / RHEL - Publish Content View
             type: job_template
             extra_vars:
@@ -63,8 +59,6 @@
 
         - identifier: SATELLITE / RHEL - Promote Content View Job Template
           unified_job_template:
-            organization:
-              name: Default
             name: SATELLITE / RHEL - Promote Content View
             type: job_template
             extra_vars: 
@@ -82,11 +76,9 @@
 
         - identifier: SERVER / RHEL7 - Patch
           unified_job_template:
-            organization:
-              name: Default
             name: SERVER / RHEL7 - Patch
             type: job_template
-            vars:
+            extra_vars:
               lifecycle_stage: RHEL7_Dev
               check_only: 'no'
           credentials: []
